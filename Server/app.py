@@ -2,9 +2,9 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import geopandas as gpd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import json
-from geoalchemy2 import Geometry  # Assegura't de tenir aquesta importació
+from geoalchemy2 import Geometry
 
 app = Flask(__name__)
 CORS(app)
@@ -12,66 +12,65 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Inda!576074!@localhost:5432/catastro'
 db = SQLAlchemy(app)
 
-# Definició del model Catastral
+# Definició de la taula catastral
 class Catastral(db.Model):
     __tablename__ = 'catastral'
-    id = db.Column(db.Integer, primary_key=True)
-    mapa = db.Column(db.Integer)
-    delegacio = db.Column(db.Integer)
-    municipio = db.Column(db.Integer)
-    masa = db.Column(db.String)
-    hoja = db.Column(db.String)
-    tipo = db.Column(db.String)
-    parcela = db.Column(db.String)
-    coorx = db.Column(db.Float)
-    coory = db.Column(db.Float)
-    via = db.Column(db.Integer)
-    numero = db.Column(db.Float)
-    numerodup = db.Column(db.String)
-    numsymbol = db.Column(db.Integer)
-    area = db.Column(db.Integer)
-    fechalta = db.Column(db.Integer)  # Si és una data, canvia a db.Column(db.Date)
-    fechabaja = db.Column(db.Integer)  # Si és una data, canvia a db.Column(db.Date)
-    ninterior = db.Column(db.Float)
-    pcat1 = db.Column(db.String)
-    pcat2 = db.Column(db.String)
-    ejercicio = db.Column(db.Integer)
-    num_exp = db.Column(db.Integer)
-    control = db.Column(db.Integer)
-    refcat = db.Column(db.String)
-    geometry = db.Column(Geometry('POLYGON'))
-    cobertura = db.Column(db.Integer, default=0)  # Si és un valor boolean, canvia a db.Boolean
+    MAPA = db.Column(db.BigInteger)
+    DELEGACIO = db.Column(db.BigInteger)
+    MUNICIPIO = db.Column(db.BigInteger)
+    MASA = db.Column(db.Text)
+    HOJA = db.Column(db.Text)
+    TIPO = db.Column(db.Text)
+    PARCELA = db.Column(db.Text)
+    COORX = db.Column(db.Float)
+    COORY = db.Column(db.Float)
+    VIA = db.Column(db.BigInteger)
+    NUMERO = db.Column(db.Float)
+    NUMERODUP = db.Column(db.Text)
+    NUMSYMBOL = db.Column(db.BigInteger)
+    AREA = db.Column(db.BigInteger)
+    FECHAALTA = db.Column(db.BigInteger)
+    FECHABAJA = db.Column(db.BigInteger)
+    NINTERNO = db.Column(db.Float, primary_key=True)
+    PCAT1 = db.Column(db.Text)
+    PCAT2 = db.Column(db.Text)
+    EJERCICIO = db.Column(db.BigInteger)
+    NUM_EXP = db.Column(db.BigInteger)
+    CONTROL = db.Column(db.BigInteger)
+    REFCAT = db.Column(db.Text)
+    geometry = db.Column(Geometry('POLYGON', 25831))
+    COBERTURA = db.Column(db.Integer, default=0)
 
     def to_dict(self):
         return {
             'type': 'Feature',
-            'geometry': json.loads(self.geometry),  # Ajusta-ho segons el tipus de dades de 'geometry'
+            'geometry': json.loads(db.session.scalar(self.geometry.ST_AsGeoJSON())),
             'properties': {
-                'id': self.id,
-                'mapa': self.mapa,
-                'delegacio': self.delegacio,
-                'municipio': self.municipio,
-                'masa': self.masa,
-                'hoja': self.hoja,
-                'tipo': self.tipo,
-                'parcela': self.parcela,
-                'coorx': self.coorx,
-                'coory': self.coory,
-                'via': self.via,
-                'numero': self.numero,
-                'numerodup': self.numerodup,
-                'numsymbol': self.numsymbol,
-                'area': self.area,
-                'fechalta': self.fechalta,
-                'fechabaja': self.fechabaja,
-                'ninterior': self.ninterior,
-                'pcat1': self.pcat1,
-                'pcat2': self.pcat2,
-                'ejercicio': self.ejercicio,
-                'num_exp': self.num_exp,
-                'control': self.control,
-                'refcat': self.refcat,
-                'cobertura': self.cobertura
+                'ID': self.NINTERNO,
+                'MAPA': self.MAPA,
+                'DELEGACIO': self.DELEGACIO,
+                'MUNICIPIO': self.MUNICIPIO,
+                'MASA': self.MASA,
+                'HOJA': self.HOJA,
+                'TIPO': self.TIPO,
+                'PARCELA': self.PARCELA,
+                'COORX': self.COORX,
+                'COORY': self.COORY,
+                'VIA': self.VIA,
+                'NUMERO': self.NUMERO,
+                'NUMERODUP': self.NUMERODUP,
+                'NUMSYMBOL': self.NUMSYMBOL,
+                'AREA': self.AREA,
+                'FECHAALTA': self.FECHAALTA,
+                'FECHABAJA': self.FECHABAJA,
+                'NINTERIOR': self.NINTERNO,
+                'PCAT1': self.PCAT1,
+                'PCAT2': self.PCAT2,
+                'EJERCICIO': self.EJERCICIO,
+                'NUM_EXP': self.NUM_EXP,
+                'CONTROL': self.CONTROL,
+                'REFCAT': self.REFCAT,
+                'COBERTURA': self.COBERTURA
             }
         }
 
@@ -80,7 +79,6 @@ class Catastral(db.Model):
 def get_catastral():
     try:
         print("Conectando a la base de datos...")
-        # Fem la consulta a la base de dades, on hi ha les dades SHA penjades.
         engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         gdf_result = gpd.read_postgis('SELECT * FROM catastral', engine, geom_col='geometry')
 
@@ -93,21 +91,23 @@ def get_catastral():
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
 
+
 # Ruta per actualitzar la cobertura d'un registre específic
-@app.route('/api/update_cobertura/<int:id>', methods=['POST'])
-def update_cobertura(id):
+@app.route('/api/update_cobertura/<NINTERNO>', methods=['POST'])
+def update_cobertura(NINTERNO):
     try:
-        # Obtenim el valor de la cobertura del cos de la sol·licitud
-        cobertura = request.json['cobertura']
-        # Cerquem el registre amb l'identificador especificat
-        registro = Catastral.query.get(id)
-        if registro:
-            # Actualitzem el camp de cobertura del registre
-            registro.cobertura = cobertura  # Canviem directament el valor
-            # Guardem els canvis a la base de dades
-            db.session.commit()
+        cobertura = request.json['COBERTURA']
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        with engine.connect() as connection:
+            update_query = 'UPDATE catastral SET "COBERTURA" = {cobertura} WHERE "NINTERNO" = {ninterno}'.format(cobertura=cobertura, ninterno=NINTERNO)
+            print(update_query); 
+            result = connection.execute(text(update_query))
+            connection.commit()
+
+            if result.rowcount == 0:
+                return jsonify({"error": "Registro no encontrado"}), 404
+            print(f"Cobertura actualitzada per NINTERNO: {NINTERNO} a {cobertura}")
             return jsonify({"success": True}), 200
-        return jsonify({"error": "Registro no encontrado"}), 404
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500

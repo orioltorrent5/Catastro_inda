@@ -23,15 +23,22 @@ document.addEventListener("DOMContentLoaded", function () {
             return response.json();
         })
         .then(data => {
+            // Això sería cada parcela
             var geojsonLayer = L.Proj.geoJson(data, {
+                // Depenent del valor de la cobertura apliquem un style o un altre
+                style: function(feature) {
+                    return {
+                        color: feature.properties.COBERTURA ? 'green' : 'red'
+                    };
+                },
                 onEachFeature: function (feature, layer) {
-                    var cobertura = feature.properties.cobertura ? "Sí" : "No";
-                    var newCobertura = feature.properties.cobertura ? 0 : 1; // Canviar el valor correctament
+                    var cobertura = feature.properties.COBERTURA ? "Sí" : "No";
+                    var newCobertura = feature.properties.COBERTURA ? 0 : 1;
                     layer.bindPopup(
-                        `<b>Parcela:</b> ${feature.properties.parcela}<br>
-                        <b>Coordenades:</b> (${feature.properties.coorx}, ${feature.properties.coory})<br>
+                        `<b>Parcela:</b> ${feature.properties.PARCELA}<br>
+                        <b>Coordenades:</b> (${feature.properties.COORX}, ${feature.properties.COORY})<br>
                         <b>Cobertura:</b> ${cobertura}<br>
-                        <button onclick="updateCobertura(${feature.properties.id}, ${newCobertura})">
+                        <button onclick="updateCobertura(${feature.properties.NINTERNO}, ${newCobertura})">
                             Canviar Cobertura
                         </button>`
                     );
@@ -44,13 +51,14 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error('Error loading the GeoJSON data:', error);
         });
 
-    window.updateCobertura = function (id, cobertura) {
-        fetch(`http://localhost:5000/api/update_cobertura/${id}`, {
+    window.updateCobertura = function (NINTERNO, cobertura) {
+        console.log('Updating cobertura for:', NINTERNO, 'to:', cobertura);
+        fetch(`http://localhost:5000/api/update_cobertura/${NINTERNO}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ cobertura: cobertura })
+            body: JSON.stringify({ COBERTURA: cobertura })
         })
         .then(response => {
             if (!response.ok) {
@@ -61,7 +69,11 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.success) {
                 alert('Cobertura actualitzada');
-                location.reload();  // Recargar la pàgina per reflectir els canvis
+                // Guardar el nivel de zoom y la posición actual del mapa en el almacenamiento local
+                localStorage.setItem('mapLat', map.getCenter().lat);
+                localStorage.setItem('mapLon', map.getCenter().lng);
+                localStorage.setItem('mapZoom', map.getZoom());
+                location.reload();
             } else {
                 alert('Error al actualitzar la cobertura');
             }
