@@ -1,7 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
-    var lat = 42.117974474865015;
-    var lon = 2.7640465766256925;
-    var map = L.map('map').setView([lat, lon], 13);
+
+    // Recuperar el nivel de zoom y la posición del almacenamiento local
+    var savedLat = localStorage.getItem('mapLat');
+    var savedLon = localStorage.getItem('mapLon');
+    var savedZoom = localStorage.getItem('mapZoom');
+    
+    // Si tenim uns valors guardats osigui si no es null, li posem el que tenía i sino posem el perdefecte.
+    var lat = savedLat ? parseFloat(savedLat) : 42.117974474865015;
+    var lon = savedLon ? parseFloat(savedLon) : 2.7640465766256925;
+    var zoom = savedZoom ? parseInt(savedZoom) : 13;
+
+
+    var map = L.map('map').setView([lat, lon], zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
@@ -45,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
             geojsonLayer.addTo(map);
-            map.fitBounds(geojsonLayer.getBounds());
+            // map.fitBounds(geojsonLayer.getBounds());
         })
         .catch(error => {
             console.error('Error loading the GeoJSON data:', error);
@@ -69,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.success) {
                 alert('Cobertura actualitzada');
-                // Guardar el nivel de zoom y la posición actual del mapa en el almacenamiento local
+                // Guardar el nivel de zoom y la posición actual del mapa en el almacenamiento local. En items al cache
                 localStorage.setItem('mapLat', map.getCenter().lat);
                 localStorage.setItem('mapLon', map.getCenter().lng);
                 localStorage.setItem('mapZoom', map.getZoom());
