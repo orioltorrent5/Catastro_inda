@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
         maxZoom: 19
     }).addTo(map);
 
+    // Passem les coordenades a el format que ens interessa.
     var crs = new L.Proj.CRS('EPSG:25831',
         '+proj=utm +zone=31 +ellps=GRS80 +units=m +no_defs',
         {
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Depenent del valor de la cobertura apliquem un style o un altre
                 style: function(feature) {
                     return {
-                        color: feature.properties.COBERTURA ? 'green' : 'red'
+                        color: feature.properties.COBERTURA ? '#67E70E' : 'red'
                     };
                 },
                 onEachFeature: function (feature, layer) {
@@ -61,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error('Error loading the GeoJSON data:', error);
         });
 
+    // Funció per actualitzar la cobertura
     window.updateCobertura = function (NINTERNO, cobertura) {
         console.log('Updating cobertura for:', NINTERNO, 'to:', cobertura);
         fetch(`http://localhost:5000/api/update_cobertura/${NINTERNO}`, {
@@ -78,7 +80,6 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(data => {
             if (data.success) {
-                alert('Cobertura actualitzada');
                 // Guardar el nivel de zoom y la posición actual del mapa en el almacenamiento local. En items al cache
                 localStorage.setItem('mapLat', map.getCenter().lat);
                 localStorage.setItem('mapLon', map.getCenter().lng);
@@ -92,4 +93,8 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error('Error updating cobertura:', error);
         });
     }
+
+    //TODO:
+    // - Buscador de carrer.
+    // - Direccio de carres a la info.
 });

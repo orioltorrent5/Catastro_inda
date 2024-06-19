@@ -10,69 +10,6 @@ app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Inda!576074!@localhost:5432/catastro'
-db = SQLAlchemy(app)
-
-# Definició de la taula catastral
-class Catastral(db.Model):
-    __tablename__ = 'catastral'
-    MAPA = db.Column(db.BigInteger)
-    DELEGACIO = db.Column(db.BigInteger)
-    MUNICIPIO = db.Column(db.BigInteger)
-    MASA = db.Column(db.Text)
-    HOJA = db.Column(db.Text)
-    TIPO = db.Column(db.Text)
-    PARCELA = db.Column(db.Text)
-    COORX = db.Column(db.Float)
-    COORY = db.Column(db.Float)
-    VIA = db.Column(db.BigInteger)
-    NUMERO = db.Column(db.Float)
-    NUMERODUP = db.Column(db.Text)
-    NUMSYMBOL = db.Column(db.BigInteger)
-    AREA = db.Column(db.BigInteger)
-    FECHAALTA = db.Column(db.BigInteger)
-    FECHABAJA = db.Column(db.BigInteger)
-    NINTERNO = db.Column(db.Float, primary_key=True)
-    PCAT1 = db.Column(db.Text)
-    PCAT2 = db.Column(db.Text)
-    EJERCICIO = db.Column(db.BigInteger)
-    NUM_EXP = db.Column(db.BigInteger)
-    CONTROL = db.Column(db.BigInteger)
-    REFCAT = db.Column(db.Text)
-    geometry = db.Column(Geometry('POLYGON', 25831))
-    COBERTURA = db.Column(db.Integer, default=0)
-
-    def to_dict(self):
-        return {
-            'type': 'Feature',
-            'geometry': json.loads(db.session.scalar(self.geometry.ST_AsGeoJSON())),
-            'properties': {
-                'ID': self.NINTERNO,
-                'MAPA': self.MAPA,
-                'DELEGACIO': self.DELEGACIO,
-                'MUNICIPIO': self.MUNICIPIO,
-                'MASA': self.MASA,
-                'HOJA': self.HOJA,
-                'TIPO': self.TIPO,
-                'PARCELA': self.PARCELA,
-                'COORX': self.COORX,
-                'COORY': self.COORY,
-                'VIA': self.VIA,
-                'NUMERO': self.NUMERO,
-                'NUMERODUP': self.NUMERODUP,
-                'NUMSYMBOL': self.NUMSYMBOL,
-                'AREA': self.AREA,
-                'FECHAALTA': self.FECHAALTA,
-                'FECHABAJA': self.FECHABAJA,
-                'NINTERIOR': self.NINTERNO,
-                'PCAT1': self.PCAT1,
-                'PCAT2': self.PCAT2,
-                'EJERCICIO': self.EJERCICIO,
-                'NUM_EXP': self.NUM_EXP,
-                'CONTROL': self.CONTROL,
-                'REFCAT': self.REFCAT,
-                'COBERTURA': self.COBERTURA
-            }
-        }
 
 # Ruta per obtenir les dades cadastrals en format GeoJSON
 @app.route('/api/catastral')
