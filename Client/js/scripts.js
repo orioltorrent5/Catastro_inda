@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     var newCobertura = feature.properties.COBERTURA ? 0 : 1;
                     layer.bindPopup(
                         `<b>Parcela:</b> ${feature.properties.PARCELA}<br>
-                        <b>Coordenades:</b> (${feature.properties.COORX}, ${feature.properties.COORY})<br>
+                        <b>Coordenades:</b> (${feature.properties.COORX}, ${feature.properties.COORY})<br> 
                         <b>Cobertura:</b> ${cobertura}<br>
                         <button onclick="updateCobertura(${feature.properties.NINTERNO}, ${newCobertura})">
                             Canviar Cobertura
@@ -97,4 +97,5 @@ document.addEventListener("DOMContentLoaded", function () {
     //TODO:
     // - Buscador de carrer.
     // - Direccio de carres a la info.
+    // - Posar Latitut i Longitut a descripció del mapa
 });
