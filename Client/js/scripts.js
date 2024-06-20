@@ -38,20 +38,29 @@ document.addEventListener("DOMContentLoaded", function () {
             var geojsonLayer = L.Proj.geoJson(data, {
                 // Depenent del valor de la cobertura apliquem un style o un altre
                 style: function(feature) {
-                    return {
-                        color: feature.properties.COBERTURA ? '#67E70E' : 'red'
+                    switch (feature.properties.COBERTURA) {
+                        case 1: return { color: 'green' };
+                        case 2: return { color: 'orange' };
+                        case 3: return { color: 'blue' };
+                        default: return { color: 'red' };
                     };
                 },
                 onEachFeature: function (feature, layer) {
-                    var cobertura = feature.properties.COBERTURA ? "Sí" : "No";
-                    var newCobertura = feature.properties.COBERTURA ? 0 : 1;
+                    var coberturaText = ["No", "Sí", "Próximament", "Client"][feature.properties.COBERTURA];
                     layer.bindPopup(
                         `<b>Parcela:</b> ${feature.properties.PARCELA}<br>
-                        <b>Coordenades:</b> (${feature.properties.COORX}, ${feature.properties.COORY})<br> 
-                        <b>Cobertura:</b> ${cobertura}<br>
-                        <button onclick="updateCobertura(${feature.properties.NINTERNO}, ${newCobertura})">
-                            Canviar Cobertura
-                        </button>`
+                        <b>Direcció:</b> (${feature.properties.DIRECCION})<br> 
+                        <b>Coordenades:</b> (${feature.properties.LAT}, ${feature.properties.LON})<br> 
+                        <b>Cobertura:</b> ${coberturaText}<br>
+                        <form onsubmit="event.preventDefault(); updateCobertura(${feature.properties.NINTERNO}, this.cobertura.value);">
+                            <select name="cobertura">
+                                <option value="0">No</option>
+                                <option value="1">Sí</option>
+                                <option value="2">Próximament</option>
+                                <option value="3">Client</option>
+                            </select>
+                            <button type="submit">Canviar</button>
+                        </form>`
                     );
                 }
             });
@@ -92,10 +101,12 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => {
             console.error('Error updating cobertura:', error);
         });
+
     }
 
     //TODO:
     // - Buscador de carrer.
     // - Direccio de carres a la info.
     // - Posar Latitut i Longitut a descripció del mapa
+    // - Quan sigui client color rosa.
 });
