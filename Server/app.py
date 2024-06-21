@@ -4,20 +4,46 @@ from flask_cors import CORS
 import geopandas as gpd
 from sqlalchemy import create_engine, text
 import json
-from geoalchemy2 import Geometry
+import pyproj
 
 app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Inda!576074!@localhost:5432/catastro'
 
-# Ruta per obtenir les dades cadastrals en format GeoJSON
+# Ruta per obtenir les dades cadastrals en format GeoJSON depenent de la bounding box
 @app.route('/api/catastral')
 def get_catastral():
     try:
         print("Conectando a la base de datos...")
+        # Obtener los parámetros de la bounding box
+        minx = request.args.get('minx', type=float)
+        miny = request.args.get('miny', type=float)
+        maxx = request.args.get('maxx', type=float)
+        maxy = request.args.get('maxy', type=float)
+
+        print(f"Bounding Box - minx: {minx}, miny: {miny}, maxx: {maxx}, maxy: {maxy}")
+
+
+        if minx is None or miny is None or maxx is None or maxy is None:
+            return jsonify({"error": "Faltan parámetros de la bounding box"}), 400
+        
+        # Convertir coordenadas de EPSG:4326 a EPSG:25831 
+        # Ho fem ja que sino la consulta no surt bé. Perquè el geometry esta en format 25831
+        transformer = pyproj.Transformer.from_crs("EPSG:4326", "EPSG:25831", always_xy=True)
+        minx, miny = transformer.transform(minx, miny)
+        maxx, maxy = transformer.transform(maxx, maxy)
+
+        # Crear la consulta SQL para obtener los datos dentro de la bounding box
         engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-        gdf_result = gpd.read_postgis('SELECT * FROM catastral', engine, geom_col='geometry')
+        query = f"""
+            SELECT * FROM catastral
+            WHERE ST_Intersects(
+                geometry,
+                ST_MakeEnvelope({minx}, {miny}, {maxx}, {maxy}, 25831)
+            )
+        """
+        gdf_result = gpd.read_postgis(query, engine, geom_col='geometry')
 
         print("Convirtiendo el GeoDataFrame a GeoJSON...")
         geojson_data = gdf_result.to_json()
