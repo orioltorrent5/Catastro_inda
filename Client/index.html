@@ -10,8 +10,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.1/proj4leaflet.js"></script>
     <script src="js/scripts.js" defer></script>
+    <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
-    <div id="map" style="width: 100%; height: 600px;"></div>
+    <div id="map"></div>
+    <div class="legend">
+        <div class="item"><span class="color-box senseCobertura"></span>Sense Cobertura</div>
+        <div class="item"><span class="color-box ambCobertura"></span>Amb Cobertura</div>
+        <div class="item"><span class="color-box proximament"></span>Pròximament</div>
+    </div>
+    <div class="search-container">
+        <form id="search-form">
+            <input type="text" id="search-input" placeholder="Buscar direcció..." />
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
 </body>
 </html>

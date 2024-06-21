@@ -34,17 +34,18 @@ document.addEventListener("DOMContentLoaded", function () {
             return response.json();
         })
         .then(data => {
-            // Això sería cada parcela
+            // Això serían totes ledades.
             var geojsonLayer = L.Proj.geoJson(data, {
-                // Depenent del valor de la cobertura apliquem un style o un altre
+                // Ara per les dades fem el seguent.
+                // feature es cada entitat de les dades.
                 style: function(feature) {
                     switch (feature.properties.COBERTURA) {
                         case 1: return { color: 'green' };
                         case 2: return { color: 'orange' };
-                        case 3: return { color: 'blue' };
                         default: return { color: 'red' };
                     };
                 },
+                // Definim una funció que s'executa a cada feature. Layer es la capa corresponent a l'entiat.
                 onEachFeature: function (feature, layer) {
                     var coberturaText = ["No", "Sí", "Próximament", "Client"][feature.properties.COBERTURA];
                     layer.bindPopup(
@@ -52,19 +53,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         <b>Direcció:</b> (${feature.properties.DIRECCION})<br> 
                         <b>Coordenades:</b> (${feature.properties.LAT}, ${feature.properties.LON})<br> 
                         <b>Cobertura:</b> ${coberturaText}<br>
-                        <form onsubmit="event.preventDefault(); updateCobertura(${feature.properties.NINTERNO}, this.cobertura.value);">
-                            <select name="cobertura">
-                                <option value="0">No</option>
-                                <option value="1">Sí</option>
-                                <option value="2">Próximament</option>
-                                <option value="3">Client</option>
-                            </select>
-                            <button type="submit">Canviar</button>
-                        </form>`
+                        <button class='btn_si' onclick="updateCobertura(${feature.properties.NINTERNO}, 1)">Sí</button>
+                        <button class='btn_no' onclick="updateCobertura(${feature.properties.NINTERNO}, 0)">No</button>
+                        <button class='btn_prox' onclick="updateCobertura(${feature.properties.NINTERNO}, 2)">Pròximament</button>`
                     );
                 }
             });
+            // Afegim el geojson al mapa.
             geojsonLayer.addTo(map);
+
+            // Guardem la capa per utilitzar-la al cercar.
+            // Windows vol dir variable global.
+            window.geojsonLayer = geojsonLayer; 
             // map.fitBounds(geojsonLayer.getBounds());
         })
         .catch(error => {
@@ -106,7 +106,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //TODO:
     // - Buscador de carrer.
-    // - Direccio de carres a la info.
-    // - Posar Latitut i Longitut a descripció del mapa
     // - Quan sigui client color rosa.
 });
