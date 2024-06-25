@@ -74,6 +74,34 @@ def update_cobertura(NINTERNO):
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/api/search_address', methods=['GET'])
+def search_address():
+    print("Searching street..")
+    try:
+        query = request.args.get('query')
+        if not query:
+            return jsonify({"error": "Falta el parámetro de búsqueda"}), 400
 
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        # Agafem la consulta que s'assembla més.
+        search_query = text("""
+            SELECT * FROM catastral
+            WHERE "DIRECCION" ILIKE :query
+            ORDER BY "DIRECCION" DESC
+            LIMIT 1
+        """)
+        with engine.connect() as connection:
+            result = connection.execute(search_query, {"query": f"%{query}%"}).fetchone()
+            if result:
+                address = dict(result._mapping)
+                print(address)
+                return jsonify(address)
+            else:
+                return jsonify({"error": "No se encontraron direcciones que coincidan"}), 404
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)

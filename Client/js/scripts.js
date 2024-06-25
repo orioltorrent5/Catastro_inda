@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         var coberturaText = ["No", "Sí", "Próximament", "Client"][feature.properties.COBERTURA];
                         layer.bindPopup(
                             `<b>Parcela:</b> ${feature.properties.PARCELA}<br>
-                            <b>Direcció:</b> (${feature.properties.DIRECCION})<br> 
+                            <b>Direcció:</b> ${feature.properties.DIRECCION}<br> 
                             <b>Coordenades:</b> (${feature.properties.LAT}, ${feature.properties.LON})<br> 
                             <b>Cobertura:</b> ${coberturaText}<br>
                             <button class='btn_si' onclick="updateCobertura(${feature.properties.NINTERNO}, 1)">Sí</button>
@@ -115,6 +115,53 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
     }
+
+   // Función para buscar dirección
+window.searchAddress = function () {
+    var query = document.getElementById('search').value;
+    fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(address => {
+            if (!address) {
+                alert('No se encontraron resultados');
+                return;
+            }
+
+            // Eliminar capas anteriores
+            if (window.geojsonLayer) {
+                map.removeLayer(window.geojsonLayer);
+            }
+
+            // Centrar el mapa en la nueva dirección encontrada
+            map.setView([address.LAT, address.LON], 16);
+
+            // Crear un marcador en la dirección encontrada
+            var marker = L.marker([address.LAT, address.LON]).addTo(map);
+
+            // // Añadir popup al marcador
+            marker.bindPopup(
+                `<b>Parcela:</b> ${address.PARCELA}<br>
+                <b>Direcció:</b> (${address.DIRECCION})<br> 
+                <b>Coordenades:</b> (${address.LAT}, ${address.LON})<br> 
+                <b>Cobertura:</b> ${["No", "Sí", "Próximament"][address.COBERTURA]}<br>
+                <button class='btn_si' onclick="updateCobertura(${address.NINTERNO}, 1)">Sí</button>
+                <button class='btn_no' onclick="updateCobertura(${address.NINTERNO}, 0)">No</button>
+                <button class='btn_prox' onclick="updateCobertura(${address.NINTERNO}, 2)">Pròximament</button>`
+            ).openPopup();
+
+            // Guardar el marcador para futuras referencias
+            window.geojsonLayer = marker;
+        })
+        .catch(error => {
+            console.error('Error searching address:', error);
+        });
+};
+
 
     // Cada vegada que canvia la posicó del mapa fem crida a la base de dades per saber les dades catastrals.
     map.on('moveend', loadData);
