@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Cobertura Fibra Indaleccius</title>
     <meta charset="utf-8" />
@@ -11,9 +12,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.1/proj4leaflet.js"></script>
     <script src="js/scripts.js" defer></script>
     <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/anim.css" />
+
 </head>
+
 <body>
     <div id="map"></div>
+    <div id="loading" class="loading">
+        <div class="contenedor-loader">
+            <div class="rueda"></div>
+        </div>
+    </div>
     <div class="legend">
         <div class="item"><span class="color-box senseCobertura"></span>Sense Cobertura</div>
         <div class="item"><span class="color-box ambCobertura"></span>Amb Cobertura</div>
@@ -26,4 +35,5 @@
         </form>
     </div>
 </body>
+
 </html>

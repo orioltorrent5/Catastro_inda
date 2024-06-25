@@ -27,6 +27,9 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     function loadData() {
+        // Mostrar logo de "cargando"
+        document.getElementById('loading').style.display = 'block';
+
         var bounds = map.getBounds();
         var minx = bounds.getWest();
         var miny = bounds.getSouth();
@@ -69,9 +72,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 geojsonLayer.addTo(map);
                 window.geojsonLayer = geojsonLayer;  // Guardem la capa per utilitzar-la al cercar.
                 // map.fitBounds(geojsonLayer.getBounds());
+                // Quan carraguem la capa amaguem el logo de loading.
+                document.getElementById('loading').style.display = 'none';
             })
             .catch(error => {
                 console.error('Error loading the GeoJSON data:', error);
+                 // Ocultar logo de "cargando" en caso de error también
+                document.getElementById('loading').style.display = 'none';
             });
     }
 

@@ -5,8 +5,9 @@ body {
 }
 
 #map {
-    width: 100%;
-    height: 600px;
+    position: relative;
+    height: 500px; /* Ajusta la altura según tus necesidades */
+    width: 100%; /* O el ancho específico que necesitas */
 }
 
 .legend {
@@ -21,11 +22,6 @@ body {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-
-.legend .title {
-    font-weight: bold;
-}
-
 .legend .item {
     margin-bottom: 5px;
 }
@@ -61,4 +57,38 @@ body {
     padding: 5px;
     font-size: 14px;
     margin-right: 5px;
+}
+
+/* Elemento de carga */
+.loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1500; /* Asegúrate de que el índice z sea mayor que el de cualquier otro elemento dentro del mapa */
+}
+
+.contenedor-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rueda {
+    border: 10px solid rgba(255, 255, 255, .3);
+    border-radius: 50%;
+    border-top-color: black; /* Cambia el color superior para que sea visible */
+    width: 80px;
+    height: 80px;
+    animation: giro 1s linear infinite;
+}
+
+@keyframes giro {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
