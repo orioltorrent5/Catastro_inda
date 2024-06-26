@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
    // Función para buscar dirección
 window.searchAddress = function () {
     var query = document.getElementById('search').value;
@@ -157,6 +158,16 @@ window.searchAddress = function () {
         .catch(error => {
             console.error('Error searching address:', error);
         });
+};
+
+// Funció per eliminar la marca de cerca
+window.deleteAddress = function () {
+    // Comprova si hi ha un mercador creat.
+    if (searchMarker) {
+        // Si esta creat l'elimina i posa la variable com a null.
+        map.removeLayer(searchMarker);
+        searchMarker = null;
+    }
 };
 
     // Cada vegada que canvia la posicó del mapa fem crida a la base de dades per saber les dades catastrals.

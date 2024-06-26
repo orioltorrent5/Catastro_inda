@@ -5,9 +5,11 @@ body {
 }
 
 #map {
-    position: relative;
-    height: 500px; /* Ajusta la altura según tus necesidades */
-    width: 100%; /* O el ancho específico que necesitas */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }
 
 .legend {
@@ -22,6 +24,7 @@ body {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
 .legend .item {
     margin-bottom: 5px;
 }
@@ -33,19 +36,21 @@ body {
     margin-right: 5px;
 }
 
-.senseCobertura, .btn_no { background: red; color: white;}
-.ambCobertura, .btn_si { background: green; color: white;}
-.proximament, .btn_prox { background: orange; color: white;}
+.senseCobertura, .btn_no { background: red; color: white; }
+.ambCobertura, .btn_si { background: green; color: white; }
+.proximament, .btn_prox { background: orange; color: white; }
 .client { background: blue; }
 
 .search-container {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 120px; /* Ajustar este valor según la altura de la leyenda */
+    left: 10px;
     z-index: 1000;
     background: white;
     padding: 10px;
+    border: 1px solid #ccc;
     border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 #search-form {
@@ -57,9 +62,25 @@ body {
     padding: 5px;
     font-size: 14px;
     margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    flex-grow: 1;
 }
 
-/* Elemento de carga */
+#search-form button {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#search-form button:hover {
+    background: #0056b3;
+}
+
 .loading {
     position: absolute;
     top: 0;
