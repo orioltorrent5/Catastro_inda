@@ -93,7 +93,6 @@ def search_address():
                 SELECT * FROM catastral
                 WHERE "DIRECCION" ILIKE :query
                 ORDER BY "DIRECCION" DESC
-                LIMIT 5
             """)
             with engine.connect() as connection:
                 result = connection.execute(search_query, {"query": f"%{query}%"}).fetchall()

@@ -168,7 +168,7 @@ window.searchAddress = function () {
         return;
     }
     fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}&option=1`)
-        .then(response => {
+        .then(response => { // Mirem la reposta de la 
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -181,9 +181,11 @@ window.searchAddress = function () {
                 // Mostrem els elemetns suggertis.
                 var listItem = document.createElement('li');
                 listItem.textContent = address.DIRECCION;
+                // Quan cliquem un element.
                 listItem.onclick = function() {
+                    // Posem la direccio a la barra de buscar.
                     document.getElementById('search-input').value = address.DIRECCION;
-                    suggestionsList.innerHTML = '';
+                    suggestionsList.innerHTML = ''; // Netejem els camps suggerits.
                     window.searchAddress();
                 };
                 suggestionsList.appendChild(listItem);
