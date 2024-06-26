@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => {
                 console.error('Error loading the GeoJSON data:', error);
-                 // Ocultar logo de "cargando" en caso de error también
+                // Ocultar logo de "cargando" en caso de error también
                 document.getElementById('loading').style.display = 'none';
             });
     }
@@ -114,99 +114,118 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => {
                 console.error('Error updating cobertura:', error);
+
             });
 
     }
 
 
-   // Función para buscar dirección
-window.searchAddress = function () {
-    var query = document.getElementById('search-input').value;
-    fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}&option=2`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(address => {
-            if (!address) {
-                alert('No se encontraron resultados');
-                return;
-            }
+    // Función para buscar dirección
+    window.searchAddress = function () {
+        var query = document.getElementById('search-input').value;
+        fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}&option=2`)
+            .then(response => {
+                if (!response.ok) {
+                    
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(address => {
+                if (!address) {
+                    alert('No se encontraron resultados');
+                    return;
+                }
 
-            // Centrar el mapa en la nueva dirección encontrada
-            map.setView([address.LAT, address.LON], 22);
+                // Centrar el mapa en la nueva dirección encontrada
+                map.setView([address.LAT, address.LON], 22);
 
-            // Crear un marcador en la dirección encontrada
-            if (searchMarker) {
-                map.removeLayer(searchMarker);
-            }
-            searchMarker = L.marker([address.LAT, address.LON]).addTo(map);
+                // Crear un marcador en la dirección encontrada
+                if (searchMarker) {
+                    map.removeLayer(searchMarker);
+                }
+                searchMarker = L.marker([address.LAT, address.LON]).addTo(map);
 
-            // Añadir popup al marcador
-            searchMarker.bindPopup(
-                `<b>Parcela:</b> ${address.PARCELA}<br>
+                // Añadir popup al marcador
+                searchMarker.bindPopup(
+                    `<b>Parcela:</b> ${address.PARCELA}<br>
                 <b>Direcció:</b> (${address.DIRECCION})<br> 
                 <b>Coordenades:</b> (${address.LAT}, ${address.LON})<br> 
                 <b>Cobertura:</b> ${["No", "Sí", "Próximament"][address.COBERTURA]}<br>
                 <button class='btn_si' onclick="updateCobertura(${address.NINTERNO}, 1)">Sí</button>
                 <button class='btn_no' onclick="updateCobertura(${address.NINTERNO}, 0)">No</button>
                 <button class='btn_prox' onclick="updateCobertura(${address.NINTERNO}, 2)">Pròximament</button>`
-            ).openPopup();
-        })
-        .catch(error => {
-            console.error('Error searching address:', error);
-        });
-};
-
- // Funció per mostrar suggeriments a mesura que s'escriu
- window.showSuggestions = function (query) {
-    // Fins que no s'han escrit 3 lletres no fa la cerca.
-    if (query.length < 3) {
-        document.getElementById('suggestions').innerHTML = '';
-        return;
-    }
-    fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}&option=1`)
-        .then(response => { // Mirem la reposta de la 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(suggestions => {
-            var suggestionsList = document.getElementById('suggestions');
-            suggestionsList.innerHTML = '';
-            suggestions.forEach(address => {
-                // Mostrem els elemetns suggertis.
-                var listItem = document.createElement('li');
-                listItem.textContent = address.DIRECCION;
-                // Quan cliquem un element.
-                listItem.onclick = function() {
-                    // Posem la direccio a la barra de buscar.
-                    document.getElementById('search-input').value = address.DIRECCION;
-                    suggestionsList.innerHTML = ''; // Netejem els camps suggerits.
-                    window.searchAddress();
-                };
-                suggestionsList.appendChild(listItem);
+                ).openPopup();
+            })
+            .catch(error => {
+                console.error('Error searching address:', error);
+                 // Si dona error al buscar.
+                 var suggestionsList = document.getElementById('suggestions');
+                 suggestionsList.innerHTML = ''; // Clear suggestions list
+                 const errorMessage = document.createElement('li');
+                 errorMessage.textContent = "No s'han trobat resultats"; // Display custom error message
+                 suggestionsList.appendChild(errorMessage); // Append error message to the suggestions list
+                 console.error('Error fetching suggestions:', error);
             });
-        })
-        .catch(error => {
-            console.error('Error fetching suggestions:', error);
-        });
-};
+    };
+
+    // Funció per mostrar suggeriments a mesura que s'escriu
+    window.showSuggestions = function (query) {
+        // Fins que no s'han escrit 3 lletres no fa la cerca.
+        if (query.length < 3) {
+            document.getElementById('suggestions').innerHTML = '';
+            return;
+        }
+        fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}&option=1`)
+            .then(response => { // Mirem la reposta de la 
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('No s\'han trobat resultats'); // Specific message for 404 error
+                    }
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(suggestions => {
+                suggestionsList.innerHTML = '';
+                suggestions.forEach(address => {
+                    // Mostrem els elemetns suggertis.
+                    var listItem = document.createElement('li');
+                    listItem.textContent = address.DIRECCION;
+                    // Quan cliquem un element.
+                    listItem.onclick = function () {
+                        // Posem la direccio a la barra de buscar.
+                        document.getElementById('search-input').value = address.DIRECCION;
+                        suggestionsList.innerHTML = ''; // Netejem els camps suggerits.
+                        window.searchAddress(); // Executem la funció buscar adreça que ja agafe el valor del camp search-input
+                    };
+                    suggestionsList.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                // Si dona error al buscar mostrem a les sugerides que no s'ha trobat resultats.
+                var suggestionsList = document.getElementById('suggestions');
+                suggestionsList.innerHTML = ''; // Clear suggestions list
+                const errorMessage = document.createElement('li');
+                errorMessage.textContent = error.message; // Display custom error message
+                suggestionsList.appendChild(errorMessage); // Append error message to the suggestions list
+                console.error('Error fetching suggestions:', error);
+            });
+    };
 
 
 
-// Funció per eliminar la marca de cerca
-window.deleteAddress = function () {
-    // Comprova si hi ha un mercador creat.
-    if (searchMarker) {
-        // Si esta creat l'elimina i posa la variable com a null.
-        map.removeLayer(searchMarker);
-        searchMarker = null;
-    }
-};
+    // Funció per eliminar la marca de cerca
+    window.deleteAddress = function () {
+        document.getElementById('search-input').value = '';
+        // Comprova si hi ha un mercador creat.
+        if (searchMarker) {
+            // Si esta creat l'elimina i posa la variable com a null.
+            map.removeLayer(searchMarker);
+            searchMarker = null;
+            query == '';
+        }
+    };
 
     // Cada vegada que canvia la posicó del mapa fem crida a la base de dades per saber les dades catastrals.
     map.on('moveend', loadData);

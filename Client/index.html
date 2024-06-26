@@ -28,14 +28,17 @@
         <div class="item"><span class="color-box ambCobertura"></span>Amb Cobertura</div>
         <div class="item"><span class="color-box proximament"></span>Pròximament</div>
     </div>
-    <div class="search-container">
-        <input type="text" id="search-input" onkeyup="showSuggestions(this.value)" placeholder="Cerca una direcció..." />
-        <ul id="suggestions"></ul>
-        <button type="submit" onclick="searchAddress()">Buscar</button>
-        <button type="submit" onclick="deleteAddress()">
+    <div class="search-container" role="search">
+        <input type="text" id="search-input" onkeyup="showSuggestions(this.value)" placeholder="Cerca una direcció..." aria-label="Search Input">
+        <ul id="suggestions" role="listbox"></ul>
+        <button type="submit" onclick="searchAddress()" aria-label="Search">
+            Buscar
+        </button>
+        <button type="submit" onclick="deleteAddress()" aria-label="Delete Address">
             <i class="bi bi-trash"></i>
         </button>
     </div>
+    
 </body>
 
 </html>
