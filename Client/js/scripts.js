@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var lon = savedLon ? parseFloat(savedLon) : 2.7640465766256925;
     var zoom = savedZoom ? parseInt(savedZoom) : 13;
 
-
     var map = L.map('map').setView([lat, lon], zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -25,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
             origin: [0, 0]
         }
     );
+
+    var searchMarker = null;  // Guardar el marcador de búsqueda
 
     function loadData() {
         // Mostrar logo de "cargando"
@@ -45,6 +46,8 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(data => {
                 if (window.geojsonLayer) {
+                    // Si ja ha carregat una capa geojsonLayer anteriorment la borra.
+                    // Només eliminem la capa geojsonLayer, i no la search.
                     map.removeLayer(window.geojsonLayer);
                 }
 
@@ -81,7 +84,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById('loading').style.display = 'none';
             });
     }
-
 
     // Funció per actualitzar la cobertura
     window.updateCobertura = function (NINTERNO, cobertura) {
@@ -132,19 +134,17 @@ window.searchAddress = function () {
                 return;
             }
 
-            // Eliminar capas anteriores
-            if (window.geojsonLayer) {
-                map.removeLayer(window.geojsonLayer);
-            }
-
             // Centrar el mapa en la nueva dirección encontrada
-            map.setView([address.LAT, address.LON], 16);
+            map.setView([address.LAT, address.LON], 22);
 
             // Crear un marcador en la dirección encontrada
-            var marker = L.marker([address.LAT, address.LON]).addTo(map);
+            if (searchMarker) {
+                map.removeLayer(searchMarker);
+            }
+            searchMarker = L.marker([address.LAT, address.LON]).addTo(map);
 
-            // // Añadir popup al marcador
-            marker.bindPopup(
+            // Añadir popup al marcador
+            searchMarker.bindPopup(
                 `<b>Parcela:</b> ${address.PARCELA}<br>
                 <b>Direcció:</b> (${address.DIRECCION})<br> 
                 <b>Coordenades:</b> (${address.LAT}, ${address.LON})<br> 
@@ -153,22 +153,15 @@ window.searchAddress = function () {
                 <button class='btn_no' onclick="updateCobertura(${address.NINTERNO}, 0)">No</button>
                 <button class='btn_prox' onclick="updateCobertura(${address.NINTERNO}, 2)">Pròximament</button>`
             ).openPopup();
-
-            // Guardar el marcador para futuras referencias
-            window.geojsonLayer = marker;
         })
         .catch(error => {
             console.error('Error searching address:', error);
         });
 };
 
-
     // Cada vegada que canvia la posicó del mapa fem crida a la base de dades per saber les dades catastrals.
     map.on('moveend', loadData);
 
     loadData();  // Cargar los datos inicialmente
 
-    //TODO:
-    // - Buscador de carrer.
-    // - Quan sigui client color rosa.
 });
