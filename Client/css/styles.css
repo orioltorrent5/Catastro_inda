@@ -8,8 +8,7 @@ body {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 0;
-    left: 0;
+    width: 100%;
 }
 
 .legend {
@@ -43,8 +42,8 @@ body {
 
 .search-container {
     position: absolute;
-    top: 120px; /* Ajustar este valor según la altura de la leyenda */
-    left: 10px;
+    top: 10px;
+    right: 10px;
     z-index: 1000;
     background: white;
     padding: 10px;
@@ -53,32 +52,30 @@ body {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-#search-form {
-    display: flex;
-    align-items: center;
-}
-
 #search-input {
     padding: 5px;
     font-size: 14px;
     margin-right: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    flex-grow: 1;
+    width: 200px;
 }
 
-#search-form button {
-    padding: 5px 10px;
-    font-size: 14px;
-    border: none;
-    background: #007bff;
-    color: white;
-    border-radius: 3px;
+#suggestions {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+#suggestions li {
+    padding: 5px;
     cursor: pointer;
 }
 
-#search-form button:hover {
-    background: #0056b3;
+#suggestions li:hover {
+    background-color: #f0f0f0;
 }
 
 .loading {
@@ -91,7 +88,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1500; /* Asegúrate de que el índice z sea mayor que el de cualquier otro elemento dentro del mapa */
+    z-index: 1500;
 }
 
 .contenedor-loader {
@@ -103,7 +100,7 @@ body {
 .rueda {
     border: 10px solid rgba(255, 255, 255, .3);
     border-radius: 50%;
-    border-top-color: black; /* Cambia el color superior para que sea visible */
+    border-top-color: black;
     width: 80px;
     height: 80px;
     animation: giro 1s linear infinite;

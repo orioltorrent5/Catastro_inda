@@ -29,11 +29,9 @@
         <div class="item"><span class="color-box proximament"></span>Pròximament</div>
     </div>
     <div class="search-container">
-        <input type="text" id="search" placeholder="Buscar dirección" />
-        <button onclick="searchAddress()">Buscar</button>
-        <button onclick="deleteAddress()">
-            <i class="bi bi-trash"></i>
-        </button>
+        <input type="text" id="search-input" onkeyup="showSuggestions(this.value)" placeholder="Cerca una direcció..." />
+        <ul id="suggestions"></ul>
+        <button type="submit" onclick="searchAddress()">Buscar</button>
     </div>
 </body>
 

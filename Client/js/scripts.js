@@ -121,8 +121,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
    // Función para buscar dirección
 window.searchAddress = function () {
-    var query = document.getElementById('search').value;
-    fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}`)
+    var query = document.getElementById('search-input').value;
+    fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}&option=2`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -159,6 +159,42 @@ window.searchAddress = function () {
             console.error('Error searching address:', error);
         });
 };
+
+ // Funció per mostrar suggeriments a mesura que s'escriu
+ window.showSuggestions = function (query) {
+    // Fins que no s'han escrit 3 lletres no fa la cerca.
+    if (query.length < 3) {
+        document.getElementById('suggestions').innerHTML = '';
+        return;
+    }
+    fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}&option=1`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(suggestions => {
+            var suggestionsList = document.getElementById('suggestions');
+            suggestionsList.innerHTML = '';
+            suggestions.forEach(address => {
+                // Mostrem els elemetns suggertis.
+                var listItem = document.createElement('li');
+                listItem.textContent = address.DIRECCION;
+                listItem.onclick = function() {
+                    document.getElementById('search-input').value = address.DIRECCION;
+                    suggestionsList.innerHTML = '';
+                    window.searchAddress();
+                };
+                suggestionsList.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching suggestions:', error);
+        });
+};
+
+
 
 // Funció per eliminar la marca de cerca
 window.deleteAddress = function () {
