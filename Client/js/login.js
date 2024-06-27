@@ -24,6 +24,7 @@ window.onload = function() {
                 // Creem un token de login
                 localStorage.setItem('authToken', 'e1feqwefqw');
                 localStorage.setItem('username', data.username);
+                localStorage.setItem('rol', data.rol);
 
             } else if (data.error) {
                 alert("Error de logueo: " + data.error);
