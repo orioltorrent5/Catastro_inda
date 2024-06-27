@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
                  var suggestionsList = document.getElementById('suggestions');
                  suggestionsList.innerHTML = ''; // Clear suggestions list
                  const errorMessage = document.createElement('li');
-                 errorMessage.textContent = "No s'han trobat resultats"; // Display custom error message
+                 errorMessage.textContent = 'No hi ha cap resultat.'; // Display custom error message
                  suggestionsList.appendChild(errorMessage); // Append error message to the suggestions list
                  console.error('Error fetching suggestions:', error);
             });
@@ -187,6 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(suggestions => {
+                var suggestionsList = document.getElementById('suggestions');
                 suggestionsList.innerHTML = '';
                 suggestions.forEach(address => {
                     // Mostrem els elemetns suggertis.

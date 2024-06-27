@@ -40,44 +40,6 @@ body {
 .proximament, .btn_prox { background: orange; color: white; }
 .client { background: blue; }
 
-.search-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
-    background: white;
-    padding: 10px;
-    border: 1px solid #000000;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-#search-input {
-    padding: 5px;
-    font-size: 14px;
-    margin-right: 5px;
-    width: 200px;
-}
-
-#suggestions {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-#suggestions li {
-    padding: 5px;
-    cursor: pointer;
-}
-
-#suggestions li:hover {
-    background-color: #f0f0f0;
-}
-
 .loading {
     position: absolute;
     top: 0;
@@ -109,4 +71,102 @@ body {
 @keyframes giro {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/* BUSCADOR */
+/* Container holding the search elements */
+.search-container {
+    position: relative; /* Use relative for positioning of inner elements */
+    max-width: 600px; /* Limit the width of the search container */
+    margin: 20px auto; /* Center the container and give some margin around */
+    padding: 20px;
+    background-color: #fff; /* Light background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex; /* Flexbox to align children */
+    align-items: center; /* Align items vertically in the center */
+    gap: 10px; /* Space between elements */
+    z-index: 1000;
+}
+
+/* Style the input field */
+#search-input {
+    flex-grow: 1; /* Let it take up as much space as possible */
+    border: 2px solid #ddd; /* Subtle border */
+    padding: 10px 15px; /* Padding for aesthetics */
+    border-radius: 4px; /* Rounded borders for the input */
+    outline: none; /* Remove the default focus outline */
+    transition: border-color 0.3s ease-in-out; /* Smooth transition for focus */
+}
+
+/* Input focus state */
+#search-input:focus {
+    border-color: #0056b3; /* Highlight color on focus */
+}
+
+/* Style for the suggestions dropdown */
+#suggestions {
+    list-style: none;
+    position: absolute; /* Posicionado dentro del search-container */
+    top: 100%; /* Justo debajo del campo de búsqueda */
+    left: 0;
+    width: 100%; /* Ocupa todo el ancho del contenedor padre */
+    background: #fff;
+    margin-top: 2px; /* Pequeño espacio entre el campo de entrada y las sugerencias */
+    border-radius: 0 0 8px 8px; /* Redondea solo las esquinas inferiores */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 10; /* Asegúrate de que se muestre sobre otros elementos si es necesario */
+    border: 0px solid #ccc; /* Añade un borde sutil */
+}
+
+
+/* Style for each suggestion item */
+#suggestions li {
+    padding: 10px 15px;
+    cursor: pointer; /* Indicate that items are clickable */
+    border-bottom: 1px solid #eee; /* Subtle separator */
+}
+
+#suggestions li:last-child {
+    border-bottom: none; /* No border for the last item */
+}
+
+#suggestions li:hover {
+    background-color: #f6f6f6; /* Hover state */
+}
+
+/* General style for buttons */
+button {
+    background-color: #007BFF; /* Blue background */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer; /* Indicate button is clickable */
+    transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Specific style for the delete button to make it smaller */
+button[type="submit"]:last-of-type {
+    background-color: #dc3545; /* Red color for delete */
+}
+
+button[type="submit"]:last-of-type:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+/* Style for the trash icon (assuming Bootstrap Icons are used) */
+.bi-trash {
+    vertical-align: middle;
+}
+
+
+#suggestions li:hover {
+    background-color: #f0f0f0;
 }
