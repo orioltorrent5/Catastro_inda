@@ -1,0 +1,72 @@
+/* Estilos Generales */
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Fuente moderna y limpia */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Contenedor del Formulario */
+.form-container {
+    background-color: rgb(233, 230, 230);
+    padding: 30px;
+    border-radius: 10px; /* Bordes más redondeados */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Sombra más profunda para 3D feel */
+    width: 340px;
+    transition: transform 0.3s ease-in-out; /* Transición suave para hover */
+}
+
+.form-container:hover {
+    transform: scale(1.03); /* Efecto de escalado al pasar el mouse */
+}
+
+/* Títulos dentro del formulario */
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px; /* Más espacio debajo del título */
+}
+
+/* Estilos de los inputs */
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px; /* Padding más grande para mejor clickeabilidad */
+    margin: 10px 0; /* Espacio vertical entre inputs */
+    border: 2px solid #ccc; /* Borde más grueso */
+    border-radius: 5px;
+    transition: border-color 0.3s; /* Suavizado de transición para el foco */
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #2575fc; /* Azul brillante para foco */
+    outline: none; /* Eliminar el contorno predeterminado */
+}
+
+/* Estilos de los botones */
+button {
+    width: 100%;
+    padding: 12px;
+    margin: 5px;
+    background-color: #000000; /* Verde más vivo */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #aeafaf; /* Verde oscuro para hover */
+}
+
+/* Pequeñas mejoras para inputs y botones */
+::placeholder { /* Cambiar el estilo del texto placeholder */
+    color: #bfbfbf;
+    font-style: italic;
+}

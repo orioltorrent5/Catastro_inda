@@ -61,15 +61,22 @@ document.addEventListener("DOMContentLoaded", function () {
                     },
                     onEachFeature: function (feature, layer) {
                         var coberturaText = ["No", "Sí", "Próximament", "Client"][feature.properties.COBERTURA];
-                        layer.bindPopup(
-                            `<b>Parcela:</b> ${feature.properties.PARCELA}<br>
-                            <b>Direcció:</b> ${feature.properties.DIRECCION}<br> 
-                            <b>Coordenades:</b> (${feature.properties.LAT}, ${feature.properties.LON})<br> 
-                            <b>Cobertura:</b> ${coberturaText}<br>
-                            <button class='btn_si' onclick="updateCobertura(${feature.properties.NINTERNO}, 1)">Sí</button>
-                            <button class='btn_no' onclick="updateCobertura(${feature.properties.NINTERNO}, 0)">No</button>
-                            <button class='btn_prox' onclick="updateCobertura(${feature.properties.NINTERNO}, 2)">Pròximament</button>`
-                        );
+
+                        // Generem el popup
+                        var popupContent = `<b>Parcela:</b> ${feature.properties.PARCELA}<br>
+                            <b>Direcció:</b> ${feature.properties.DIRECCION}<br>
+                            <b>Coordenades:</b> (${feature.properties.LAT}, ${feature.properties.LON})<br>
+                            <b>Cobertura:</b> ${coberturaText}`;
+
+                        // Solo añadir botones si el usuario está autenticado
+                        if (isAuthenticated()) {
+                            // Mostrem els que et permeten canviar.
+                            popupContent += `<br><button class='btn_si' onclick="updateCobertura(${feature.properties.NINTERNO}, 1)">Sí</button>
+                             <button class='btn_no' onclick="updateCobertura(${feature.properties.NINTERNO}, 0)">No</button>
+                             <button class='btn_prox' onclick="updateCobertura(${feature.properties.NINTERNO}, 2)">Pròximament</button>`;
+                        }
+
+                        layer.bindPopup(popupContent);
                     }
                 });
                 geojsonLayer.addTo(map);
@@ -87,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Funció per actualitzar la cobertura
     window.updateCobertura = function (NINTERNO, cobertura) {
+
         console.log('Updating cobertura for:', NINTERNO, 'to:', cobertura);
         fetch(`http://localhost:5000/api/update_cobertura/${NINTERNO}`, {
             method: 'POST',
@@ -119,6 +127,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    // Función para actualizar la interfaz de usuario basada en el estado de autenticación
+    function updateUIForAuthState() {
+        if (isAuthenticated()) {
+            document.getElementById('btn_login').style.display = 'none';
+            document.getElementById('btn_logout').style.display = 'block';
+            document.getElementById('btn_register').style.display = 'block';
+            document.getElementById('btn_register').disabled = false;
+        } else {
+            document.getElementById('btn_login').style.display = 'block';
+            document.getElementById('btn_logout').style.display = 'none';
+            document.getElementById('btn_register').style.display = 'none';
+            document.getElementById('btn_register').disabled = true;
+        }
+    }
+
+    // Funció tancar la sessió.
+    window.logout = function () {
+        localStorage.removeItem('authToken');  // Eliminar el token del almacenamiento
+        updateUIForAuthState();  // Actualizar la UI tras el logout
+    }
+
+
+    function isAuthenticated() {
+        return localStorage.getItem('authToken') !== null;
+    }
+
 
     // Función para buscar dirección
     window.searchAddress = function () {
@@ -126,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`http://localhost:5000/api/search_address?query=${encodeURIComponent(query)}&option=2`)
             .then(response => {
                 if (!response.ok) {
-                    
+
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
@@ -159,13 +193,13 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => {
                 console.error('Error searching address:', error);
-                 // Si dona error al buscar.
-                 var suggestionsList = document.getElementById('suggestions');
-                 suggestionsList.innerHTML = ''; // Clear suggestions list
-                 const errorMessage = document.createElement('li');
-                 errorMessage.textContent = 'No hi ha cap resultat.'; // Display custom error message
-                 suggestionsList.appendChild(errorMessage); // Append error message to the suggestions list
-                 console.error('Error fetching suggestions:', error);
+                // Si dona error al buscar.
+                var suggestionsList = document.getElementById('suggestions');
+                suggestionsList.innerHTML = ''; // Clear suggestions list
+                const errorMessage = document.createElement('li');
+                errorMessage.textContent = 'No hi ha cap resultat.'; // Display custom error message
+                suggestionsList.appendChild(errorMessage); // Append error message to the suggestions list
+                console.error('Error fetching suggestions:', error);
             });
     };
 
@@ -214,8 +248,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     };
 
-
-
     // Funció per eliminar la marca de cerca
     window.deleteAddress = function () {
         document.getElementById('search-input').value = '';
@@ -232,5 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
     map.on('moveend', loadData);
 
     loadData();  // Cargar los datos inicialmente
+    updateUIForAuthState(); // Mostra un boto de login o un de logout.
+
 
 });

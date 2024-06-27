@@ -170,3 +170,45 @@ button[type="submit"]:last-of-type:hover {
 #suggestions li:hover {
     background-color: #f0f0f0;
 }
+
+#btn_login
+ {
+    position: fixed;  
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background-color: #007BFF; /* Color de fondo azul */
+    color: white;              /* Texto blanco */
+    border: none;              /* Sin borde */
+    padding: 8px 16px;         /* Padding para hacerlo más grande */
+    border-radius: 4px;        /* Bordes redondeados */
+    cursor: pointer;           /* Cursor como puntero para indicar clickeabilidad */
+}
+
+#btn_logout
+ {
+    position: fixed;  
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background-color: #ff002b; /* Color de fondo azul */
+    color: white;              /* Texto blanco */
+    border: none;              /* Sin borde */
+    padding: 8px 16px;         /* Padding para hacerlo más grande */
+    border-radius: 4px;        /* Bordes redondeados */
+    cursor: pointer;           /* Cursor como puntero para indicar clickeabilidad */
+}
+
+#btn_register
+ {
+    position: fixed;  
+    top: 10px;
+    right: 100px;
+    z-index: 1000;
+    background-color: #070707; /* Color de fondo azul */
+    color: white;              /* Texto blanco */
+    border: none;              /* Sin borde */
+    padding: 8px 16px;         /* Padding para hacerlo más grande */
+    border-radius: 4px;        /* Bordes redondeados */
+    cursor: pointer;           /* Cursor como puntero para indicar clickeabilidad */
+}

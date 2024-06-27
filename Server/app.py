@@ -5,11 +5,69 @@ import geopandas as gpd
 from sqlalchemy import create_engine, text
 import json
 import pyproj
+from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime
+
 
 app = Flask(__name__)
 CORS(app)
 
+# Connexió a la base de dades.
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Inda!576074!@localhost:5432/catastro'
+
+# API PER REALITZAR LOGIN
+@app.route('/api/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+
+    try:
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        with engine.connect() as connection:
+            query = text("SELECT * FROM users WHERE usuario = :username AND password = crypt(:password, password)")
+            result = connection.execute(query, {'username': username, 'password': password})
+            user_row = result.fetchone()
+
+        if user_row:
+            return jsonify({"message": "Logueo exitoso", "username": user_row[1]}), 200
+        else:
+            return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
+    
+
+# API PER REALITZAR UN REGISTRE.
+@app.route('/api/register', methods=['POST'])
+def register():
+    username = request.form['username']
+    password = request.form['password']
+    today = datetime.today()
+
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+
+    try:
+        with engine.begin() as connection:  # 'begin' automatically commits or rollbacks - NO FEIA COMMIT
+            user_check_query = text("SELECT * FROM users WHERE usuario = :username")
+            user_exists = connection.execute(user_check_query, {'username': username}).fetchone()
+
+            if user_exists:
+                return jsonify({"error": "El usuario ya existe"}), 409
+
+            insert_query = text("INSERT INTO users (usuario, password, fecha_creacion, rol) VALUES (:username, crypt(:password, gen_salt('bf')), :today, 'admin')")
+            connection.execute(insert_query, {'username': username, 'password': password, 'today': today})
+            
+        return jsonify({"message": "Registro exitoso"}), 201
+
+    except SQLAlchemyError as e:
+        app.logger.error(f"Database error: {e}")
+        return jsonify({"error": "Error al interactuar con la base de datos"}), 500
+    except Exception as e:
+        app.logger.error(f"Internal error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+
 
 # Ruta per obtenir les dades cadastrals en format GeoJSON depenent de la bounding box
 @app.route('/api/catastral')
