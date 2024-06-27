@@ -29,7 +29,7 @@ def login():
             user_row = result.fetchone()
 
         if user_row:
-            return jsonify({"message": "Logueo exitoso", "username": user_row[1]}), 200
+            return jsonify({"message": "Logueo exitoso", "username": user_row[1], 'rol': user_row[5]}), 200
         else:
             return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
     except Exception as e:

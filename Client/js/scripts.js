@@ -129,12 +129,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Función para actualizar la interfaz de usuario basada en el estado de autenticación
     function updateUIForAuthState() {
-        if (isAuthenticated()) {
+        if (isAuthenticated() && localStorage.getItem('rol') == 'admin') {
             document.getElementById('btn_login').style.display = 'none';
             document.getElementById('btn_logout').style.display = 'block';
             document.getElementById('btn_register').style.display = 'block';
             document.getElementById('btn_register').disabled = false;
-        } else {
+        } else if(isAuthenticated()) {
+            document.getElementById('btn_login').style.display = 'none';
+            document.getElementById('btn_logout').style.display = 'block';
+            document.getElementById('btn_register').style.display = 'none';
+            document.getElementById('btn_register').disabled = true;
+        } else{
             document.getElementById('btn_login').style.display = 'block';
             document.getElementById('btn_logout').style.display = 'none';
             document.getElementById('btn_register').style.display = 'none';

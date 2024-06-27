@@ -3,6 +3,7 @@
 <head>
     <title>Registro - Cobertura Fibra Indaleccius</title>
     <link rel="stylesheet" href="./css/login.css" />
+    <link rel="icon" type="image/png" href="./img/log.png">
     <script src="js/register.js" defer></script>
 </head>
 <body>
@@ -13,6 +14,11 @@
             <input type="text" id="new-username" name="username" required>
             <label for="new-password">Contrasenya:</label>
             <input type="password" id="new-password" name="password" required>
+            <label for="rol">Rol:</label>
+            <select id="rol" name="rol">
+                <option value="admin">Administrador</option>
+                <option value="client">Client</option>
+            </select>
             <button type="submit">Registrar</button>
         </form>        
     </div>

@@ -1,6 +1,6 @@
 window.onload = function() {
 
-    if (localStorage.getItem('authToken') !== null){
+    if (localStorage.getItem('authToken') !== null && localStorage.getItem('rol') == 'admin'){
 
     document.getElementById('register-form').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevenir el envío tradicional del formulario
