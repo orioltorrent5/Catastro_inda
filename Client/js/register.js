@@ -8,6 +8,8 @@ window.onload = function() {
         // Recoger los datos del formulario
         var username = document.getElementById('new-username').value;
         var password = document.getElementById('new-password').value;
+        var rol = document.getElementById('rol').value;
+
 
         // Construir la solicitud fetch
         fetch('http://localhost:5000/api/register', {
@@ -15,7 +17,7 @@ window.onload = function() {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
+            body: 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password) + '&rol=' + encodeURIComponent(rol)
         })
         .then(response => response.json())
         .then(data => {

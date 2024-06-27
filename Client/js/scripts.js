@@ -151,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.logout = function () {
         localStorage.removeItem('authToken');  // Eliminar el token del almacenamiento
         updateUIForAuthState();  // Actualizar la UI tras el logout
+        location.reload();
     }
 
 

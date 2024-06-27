@@ -42,6 +42,7 @@ def login():
 def register():
     username = request.form['username']
     password = request.form['password']
+    rol = request.form['rol']
     today = datetime.today()
 
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
@@ -54,8 +55,8 @@ def register():
             if user_exists:
                 return jsonify({"error": "El usuario ya existe"}), 409
 
-            insert_query = text("INSERT INTO users (usuario, password, fecha_creacion, rol) VALUES (:username, crypt(:password, gen_salt('bf')), :today, 'admin')")
-            connection.execute(insert_query, {'username': username, 'password': password, 'today': today})
+            insert_query = text("INSERT INTO users (usuario, password, fecha_creacion, rol) VALUES (:username, crypt(:password, gen_salt('bf')), :today, :rol)")
+            connection.execute(insert_query, {'username': username, 'password': password, 'today': today, 'rol': rol})
             
         return jsonify({"message": "Registro exitoso"}), 201
 
