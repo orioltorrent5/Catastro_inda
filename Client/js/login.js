@@ -8,7 +8,7 @@ window.onload = function() {
         var btn_register = document.getElementById('password').value;
 
         // Construir la solicitud fetch
-        fetch('http://localhost:5000/apiCobertura/login', {
+        fetch('http://http://5.158.217.98/:5000/apiCobertura/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

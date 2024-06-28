@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var maxx = bounds.getEast();
         var maxy = bounds.getNorth();
 
-        fetch(`http://localhost:5000/apiCobertura/catastral?minx=${minx}&miny=${miny}&maxx=${maxx}&maxy=${maxy}`)
+        fetch(`http://http://5.158.217.98/:5000/apiCobertura/catastral?minx=${minx}&miny=${miny}&maxx=${maxx}&maxy=${maxy}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.updateCobertura = function (NINTERNO, cobertura) {
 
         console.log('Updating cobertura for:', NINTERNO, 'to:', cobertura);
-        fetch(`http://localhost:5000/apiCobertura/update_cobertura/${NINTERNO}`, {
+        fetch(`http://http://5.158.217.98/:5000/apiCobertura/update_cobertura/${NINTERNO}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Función para buscar dirección
     window.searchAddress = function () {
         var query = document.getElementById('search-input').value;
-        fetch(`http://localhost:5000/apiCobertura/search_address?query=${encodeURIComponent(query)}&option=2`)
+        fetch(`http://http://5.158.217.98/:5000/apiCobertura/search_address?query=${encodeURIComponent(query)}&option=2`)
             .then(response => {
                 if (!response.ok) {
 
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('suggestions').innerHTML = '';
             return;
         }
-        fetch(`http://localhost:5000/apiCobertura/search_address?query=${encodeURIComponent(query)}&option=1`)
+        fetch(`http://http://5.158.217.98/:5000/apiCobertura/search_address?query=${encodeURIComponent(query)}&option=1`)
             .then(response => { // Mirem la reposta de la 
                 if (!response.ok) {
                     if (response.status === 404) {
