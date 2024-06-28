@@ -16,7 +16,7 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Inda!576074!@localhost:5432/catastro'
 
 # API PER REALITZAR LOGIN
-@app.route('/api/login', methods=['POST'])
+@app.route('/apiCobertura/login', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
@@ -38,7 +38,7 @@ def login():
     
 
 # API PER REALITZAR UN REGISTRE.
-@app.route('/api/register', methods=['POST'])
+@app.route('/apiCobertura/register', methods=['POST'])
 def register():
     username = request.form['username']
     password = request.form['password']
@@ -71,7 +71,7 @@ def register():
 
 
 # Ruta per obtenir les dades cadastrals en format GeoJSON depenent de la bounding box
-@app.route('/api/catastral')
+@app.route('/apiCobertura/catastral')
 def get_catastral():
     try:
         print("Conectando a la base de datos...")
@@ -115,7 +115,7 @@ def get_catastral():
 
 
 # Ruta per actualitzar la cobertura d'un registre específic
-@app.route('/api/update_cobertura/<NINTERNO>', methods=['POST'])
+@app.route('/apiCobertura/update_cobertura/<NINTERNO>', methods=['POST'])
 def update_cobertura(NINTERNO):
     try:
         cobertura = request.json['COBERTURA']
@@ -135,7 +135,7 @@ def update_cobertura(NINTERNO):
         return jsonify({"error": str(e)}), 500
     
     
-@app.route('/api/search_address', methods=['GET'])
+@app.route('/apiCobertura/search_address', methods=['GET'])
 def search_address():
     print("Searching street..")
     try:

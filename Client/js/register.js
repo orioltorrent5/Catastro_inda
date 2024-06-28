@@ -12,7 +12,7 @@ window.onload = function() {
 
 
         // Construir la solicitud fetch
-        fetch('http://localhost:5000/api/register', {
+        fetch('http://localhost:5000/apiCobertura/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
